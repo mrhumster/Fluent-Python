@@ -9,15 +9,23 @@ class Vector:
 
     def __repr__(self):
         """
-        Строкое представление объекта
-        :return:
+        Строковое представление объекта
         """
         return f'Vector({self.x}, {self.y})'
 
     def __abs__(self):
+        """
+        :return: Return the absolute value of obj.
+        """
         return hypot(self.x, self.y)
 
     def __bool__(self):
+        """
+        Вызывается для реализации проверки истинности и встроенной операции bool();
+        должен вернуть False или True. Когда этот метод не определен, вызывается __len __(),
+        если он определен, и объект считается истинным, если его результат не равен нулю.
+        Если класс не определяет ни __len__(), ни __bool __(), все его экземпляры считаются истинными.
+        """
         return bool(abs(self))
 
     def __add__(self, other):
