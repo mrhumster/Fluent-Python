@@ -1,0 +1,4 @@
+include::./.asciidoctor/.asciidoctorconfig[]
+
+== Объекты в духе Python
+

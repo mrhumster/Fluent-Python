@@ -1,0 +1,28 @@
+>>> import inspect
+>>> from source.tag import tag
+>>> sig = inspect.signature(tag)
+>>> my_tag = {
+... 'name'  : 'img',
+... 'title' : 'Sunset Boulevard',
+... 'src'   : 'sunset.jpg',
+... 'cls'   : 'framed'
+... }
+>>> bounds_args = sig.bind(**my_tag)
+>>> bounds_args
+<BoundArguments (name='img', cls='framed', attrs={'title': 'Sunset Boulevard', 'src': 'sunset.jpg'})>
+>>> for name, value in bounds_args.arguments.items(): print(name, '=', value)
+...
+name = img
+cls = framed
+attrs = {'title': 'Sunset Boulevard', 'src': 'sunset.jpg'}
+>>> del my_tag['name']
+>>> bounds_args = sig.bind(**my_tag)
+Traceback (most recent call last):
+  File "<pyshell#16>", line 1, in <module>
+    bounds_args = sig.bind(**my_tag)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python38-32\lib\inspect.py", line 3025, in bind
+    return self._bind(args, kwargs)
+  File "C:\Users\User\AppData\Local\Programs\Python\Python38-32\lib\inspect.py", line 2940, in _bind
+    raise TypeError(msg) from None
+TypeError: missing a required argument: 'name'
+>>>

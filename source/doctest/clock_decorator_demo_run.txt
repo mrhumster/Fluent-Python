@@ -1,0 +1,10 @@
+PS C:\Users\User\PycharmProjects\Python. Design patterns and other\source> py .\clock_decorator_demo.py
+**************************************** Calling snooze(.123)
+[0.13673660] snooze(0.123 -> None)
+**************************************** Calling factorial(5)
+[0.00000120] factorial(1 -> 1)
+[0.00017130] factorial(2 -> 2)
+[0.00031230] factorial(3 -> 6)
+[0.00047800] factorial(4 -> 24)
+[0.00066200] factorial(5 -> 120)
+5! = 120

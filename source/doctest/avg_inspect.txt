@@ -1,0 +1,10 @@
+>>> from source.average import make_averager
+>>> avg = make_averager()
+>>> avg.__code__.co_varnames
+('new_value', 'total')
+>>> avg.__code__.co_freevars
+('series',)
+>>> avg.__closure__
+(<cell at 0x040DC358: list object at 0x039FA368>,)
+>>> avg.__closure__[0].cell_contents
+[10, 11, 12]

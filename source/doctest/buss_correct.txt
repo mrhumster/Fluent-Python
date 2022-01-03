@@ -1,0 +1,24 @@
+>>> from source.buss import HauntedBuss
+>>> bus1 = HauntedBuss(['Олеся', 'Артём'])
+>>> bus1.passangers
+['Олеся', 'Артём']
+>>> bus1.pick('Антон')
+>>> bus1.drop('Олеся')
+>>> bus1.passangers
+['Артём', 'Антон']
+>>> bus2 = HauntedBuss()
+>>> bus2.pick('Оксана')
+>>> bus2.passangers
+['Оксана']
+>>> bus3 = HauntedBuss()
+>>> bus3.passangers
+[]
+>>> footboal_team = ['Артем', 'Гриша', 'Пётр', 'Антон', 'Лакки']
+>>> bus4 = HauntedBuss(footboal_team)
+>>> bus4.passangers
+['Артем', 'Гриша', 'Пётр', 'Антон', 'Лакки']
+>>> bus4.drop('Антон')
+>>> footboal_team
+['Артем', 'Гриша', 'Пётр', 'Антон', 'Лакки']
+>>> bus4.passangers
+['Артем', 'Гриша', 'Пётр', 'Лакки']

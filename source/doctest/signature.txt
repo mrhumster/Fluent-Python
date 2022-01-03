@@ -1,0 +1,21 @@
+>>> from inspect import signature
+>>> sig = signature(help)
+>>> sig
+<Signature (*args, **kwds)>
+>>> str(sig)
+'(*args, **kwds)'
+>>> for name, param in sig.parameters.items(): print(param.kind, ':', name, '=', param.default)
+...
+VAR_POSITIONAL : args = <class 'inspect._empty'>
+VAR_KEYWORD : kwds = <class 'inspect._empty'>
+>>> sig = signature(open)
+>>> for name, param in sig.parameters.items(): print(param.kind, ':', name, '=', param.default)
+...
+POSITIONAL_OR_KEYWORD : file = <class 'inspect._empty'>
+POSITIONAL_OR_KEYWORD : mode = r
+POSITIONAL_OR_KEYWORD : buffering = -1
+POSITIONAL_OR_KEYWORD : encoding = None
+POSITIONAL_OR_KEYWORD : errors = None
+POSITIONAL_OR_KEYWORD : newline = None
+POSITIONAL_OR_KEYWORD : closefd = True
+POSITIONAL_OR_KEYWORD : opener = None

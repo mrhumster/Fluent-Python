@@ -1,0 +1,8 @@
+>>> from source.bingocall import BingoCage
+>>> bingo = BingoCage(range(3))
+>>> bingo.pick()
+2
+>>> bingo()
+1
+>>> callable(bingo)
+True

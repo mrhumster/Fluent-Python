@@ -1,0 +1,5 @@
+>>> from source.tag import tag
+>>> tag.__code__.co_varnames
+('name', 'cls', 'content', 'attrs')
+>>> tag.__code__.co_argcount
+1

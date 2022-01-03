@@ -1,0 +1,7 @@
+:experimental:
+:doctype: book
+:icons: font
+:myprojectbasedir: {asciidoctorconfigdir}
+:doctestdir: {myprojectbasedir}/../../source/doctest
+:sourcedir: {myprojectbasedir}/../../source
+:imagesoutdir: ./images
