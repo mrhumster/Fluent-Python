@@ -16,3 +16,5 @@ include::../docs/links-on-objects.adoc[]
 include::../docs/objects_in_the_spirit_of_python.adoc[]
 
 include::../docs/samples_async.adoc[]
+
+include::../docs/we_cut_the_sequences.adoc[]

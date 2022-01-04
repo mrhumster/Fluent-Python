@@ -6,6 +6,25 @@ class Vector2d:
     """
     :typecode: -- аттрибут класса для преобразования
     экземпляра Vector2d последовательность байтов и обратно.
+
+    >>> v1 = Vector2d(3, 4)
+    >>> print(v1.x, v1.y)
+    3.0 4.0
+    >>> x, y = v1
+    >>> x, y
+    (3.0, 4.0)
+    >>> v1
+    Vector2d(3.0, 4.0)
+    >>> v1_clone = eval(repr(v1))
+    >>> v1 == v1_clone
+    True
+    >>> print(v1)
+    (3.0, 4.0)
+    >>> octets = bytes(v1)
+    >>> abs(v1)
+    5.0
+    >>> bool(v1), bool(Vector2d(0, 0))
+    (True, False)
     """
     typecode = 'd'
 
@@ -87,3 +106,7 @@ class Vector2d:
         """
         components = (format(c, format_spec) for c in self)
         return '({}, {})'.format(*components)
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
