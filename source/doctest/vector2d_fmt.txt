@@ -1,0 +1,9 @@
+>>> from source.vector2d_v1 import Vector2dv1
+>>> format(Vector2dv1(1,1), '.3ep')
+'<1.414e+00, 7.854e-01>'
+>>> format(Vector2dv1(1,1), '0.5fp')
+'<1.41421, 0.78540>'
+>>> format(Vector2dv1(1,1), '0.5f')
+'(1.00000, 1.00000)'
+>>> format(Vector2dv1(1,1), '0.5fp')
+'<1.41421, 0.78540>'

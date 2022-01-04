@@ -1,0 +1,12 @@
+>>> from source.vector2d_v0 import Vector2d
+>>> from source.vector2d_v1 import Vector2dv1
+>>> v1 = Vector2d(3, 4)
+>>> bytes(v1)
+b'd\x00\x00\x00\x00\x00\x00\x08@\x00\x00\x00\x00\x00\x00\x10@'
+>>> v2 = Vector2dv1.from_bytes(bytes(v1))
+>>> v1 == v2
+True
+>>> v2
+Vector2dv1(3.0, 4.0)
+>>> v1
+Vector2d(3.0, 4.0)
