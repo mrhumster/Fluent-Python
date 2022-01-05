@@ -1,21 +1,21 @@
-= Конспект по книге _"Fluent Python"_ by *Luciano Ramalho*
+= Конспект по книге _"Fluent Python"_
 Anton S Khomyakov <mr.humster@gmail.com>
 :url-repo: https://github.com/mrhumster/konspekt.git
-
-include::./.asciidoctor/.asciidoctorconfig[]
-
+:experimental:
+:doctype: book
+:icons: font
+:back-cover-image: image::{imagesdir}/title.png[Front Cover,1050,1600]
+:myprojectbasedir: {asciidoctorconfigdir}
+:doctestdir: {myprojectbasedir}/../../source/doctest
+:sourcedir: {myprojectbasedir}/../../source
+:imagesoutdir: ./images
+:toc:
+:toc-title: Список разделов
 include::../docs/collections.adoc[]
-
 include::../docs/functions.adoc[]
-
 include::../docs/patterns.adoc[]
-
 include::../docs/decorator.adoc[]
-
 include::../docs/links-on-objects.adoc[]
-
 include::../docs/objects_in_the_spirit_of_python.adoc[]
-
 include::../docs/we_cut_the_sequences.adoc[]
-
 include::../docs/samples_async.adoc[]

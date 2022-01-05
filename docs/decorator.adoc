@@ -1,4 +1,5 @@
 include::./.asciidoctor/.asciidoctorconfig[]
+
 == Глава 7. Декораторы и функции замыкания
 
 TIP: Декоратор - это вызываемый объект, принимающий в качестве аргумента другую функцию.
@@ -64,7 +65,7 @@ include::{doctestdir}/avg_oo.txt[]
 ----
 
 .Результат тестирования
-[source, doctest]
+[source,doctest]
 ----
 >>> import doctest
 >>> doctest.testfile('./source/doctest/avg_oo.txt')

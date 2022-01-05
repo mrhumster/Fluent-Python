@@ -1,4 +1,5 @@
 include::./.asciidoctor/.asciidoctorconfig[]
+
 == Глава 3. Словари и множества
 
 Все словари наследуют класс *collections.abc.Mapping*. Ключи должны быть хэшируемые. Включать метод __hash__() и __eq__()
