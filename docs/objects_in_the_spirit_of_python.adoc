@@ -1,6 +1,6 @@
 include::./.asciidoctor/.asciidoctorconfig[]
 
-== Объекты в духе Python
+== Глава 9. Объекты в духе Python
 
 === Представление объекта
 

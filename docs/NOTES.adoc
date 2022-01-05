@@ -1,5 +1,6 @@
-= _Конспект по книге:_ "Python. К вершинам мастерства."
-Khomyakov Anton <mr.humster@gmail.com>
+= Конспект по книге _"Fluent Python"_ by *Luciano Ramalho*
+Anton S Khomyakov <mr.humster@gmail.com>
+:url-repo: https://github.com/mrhumster/konspekt.git
 
 include::./.asciidoctor/.asciidoctorconfig[]
 
@@ -15,6 +16,6 @@ include::../docs/links-on-objects.adoc[]
 
 include::../docs/objects_in_the_spirit_of_python.adoc[]
 
-include::../docs/samples_async.adoc[]
-
 include::../docs/we_cut_the_sequences.adoc[]
+
+include::../docs/samples_async.adoc[]

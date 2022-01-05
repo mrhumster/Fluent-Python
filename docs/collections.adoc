@@ -1,5 +1,7 @@
 include::./.asciidoctor/.asciidoctorconfig[]
 
+== Коллекции
+
 === Сравнение перечисляемых типов
 
 |===

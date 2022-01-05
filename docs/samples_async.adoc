@@ -2,9 +2,9 @@ include::./.asciidoctor/.asciidoctorconfig[]
 
 == Экстренное включение с ассинхронных игр.
 
-=== По мотивам:
+=== По мотивам статьи "Как писать асинхронный код Python"
 
-* https://python.plainenglish.io/python-async-await-90a1e1df402[How to Write Asynchronous Python Code]
+https://python.plainenglish.io/python-async-await-90a1e1df402[How to Write Asynchronous Python Code]
 
 .Простейший пример запуска в асинхронном режиме
 [source, python]
@@ -17,9 +17,9 @@ include::{sourcedir}/async_test.py[]
 include::{sourcedir}/test_async1.py[]
 ----
 
-=== Django
+=== Асинхронные представления в Django >= 3.1
 
-* https://testdriven.io/blog/django-async-views/#objectives[Async Views in Django 3.1]
+https://testdriven.io/blog/django-async-views/#objectives[Async Views in Django 3.1]
 
 .Пример асинхронных представлений
 [source, python]
