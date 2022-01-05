@@ -8,6 +8,9 @@ class Vector:
 
     def __init__(self, components):
         """
+        В "защищённом" атрибуте экземпляра self._comoponents
+        хранится массив array компонент Vector
+
         >>> Vector([3.1, 4.2])
         Vector([3.1, 4.2])
         >>> Vector((3, 4, 5))
@@ -19,6 +22,9 @@ class Vector:
 
     def __iter__(self):
         """
+        Что бы была возможность иттерировать объект
+        возвращаем иттератор основаный на _components
+
         >>> for i in Vector([1, 2, 3, 4]):
         ...     print(i)
         ...
@@ -31,11 +37,19 @@ class Vector:
 
     def __repr__(self):
         """
+        Используем reprlib.repr() для получения представления
+        self._components ограниченной длины
+
         >>> v1 = Vector((1, 2, 3, 4, 5))
         >>> repr(v1)
         'Vector([1.0, 2.0, 3.0, 4.0, 5.0])'
+        >>> v1 = Vector([1, 2, 3, 4, 5, 6, 7, 8])
+        >>> repr(v1)
+        'Vector([1.0, 2.0, 3.0, 4.0, 5.0, ...])'
         """
         components = reprlib.repr(self._components)
+        # Удаляем префикс array('d' и закрываем скобку ),
+        # перед тем как подставить строку в вызов конструктора.
         components = components[components.find('['):-1]
         return 'Vector({})'.format(components)
 
@@ -49,17 +63,23 @@ class Vector:
 
     def __bytes__(self):
         """
+        Строим объект bytes из self._components
+
         >>> v1 = Vector([1,1])
         >>> bytes(v1)
         b'd\\x00\\x00\\x00\\x00\\x00\\x00\\xf0?\\x00\\x00\\x00\\x00\\x00\\x00\\xf0?'
         """
-        return (bytes([ord(self.typecode)]) + bytes(self._components))
+        return bytes([ord(self.typecode)]) + bytes(self._components)
 
     def __eq__(self, other):
         return tuple(self) == tuple(other)
 
     def __abs__(self):
         """
+        Метод hypot больше не применим, поэтому
+        вычисляем сумму квадратов компонент и извлекаем
+        из неё квадратный корень.
+
         >>> v1 = Vector([3, 4])
         >>> abs(v1)
         5.0
