@@ -1,0 +1,204 @@
+include::./.asciidoctor/.asciidoctorconfig[]
+
+== Глава 11. Интерфейсы: от протоколов до абстрактных классов.
+
+CAUTION: ABC, подобно дескрипторам и метаклассам, предназначены для разработки каркасов. Поэтому лишь малая часть пишущих на Python может создавать ABC, не налагая ненужных ограничений на своих коллег.
+
+=== Интерфейсы и протоколы в культуре Python
+
+NOTE: *_Интерфейс_* -- подмножество открытых методов объекта, которое позволяет ему играть определённую роль в системе.
+
+NOTE: *_Протоколы_* -- это интерфейсы, но поскольку они не формализованы -- определены лишь путём документирования и соглашения -- то не могут быть строго поддержаны как формальные интерфейсы
+
+Одним из самых фундаментальных интерфейсов в Python -- протокол последовательности.
+
+=== Python в поисках следов последовательностей.
+
+Интерпретатор Python прилагает все усилия, стараясь обработать объекты, представляющие самую минимальную реализацию протокола последовательностей.
+
+Sequence -- Последовательность
+
+.UML-диаграмма абстрактного базового класса *Sequence* (последовательность)
+[ditaa]
+----
+
+Формальное опредление интерфейса Sequnce в виде ABC
+
+ +--------------\           +-----------------\
+ | Container    |<----------| Sequence        |
+ +--------------+           +-----------------+
+ | __contains__ |           |   __getitem__   |
+ \--------------+           |   __contains__  |
+                            |   __iter__      |
+ +--------------\           |   __reversed__  |
+ | Iterable     |<----------|   index         |
+ +--------------+           |   count         |
+ | __iter__     |           \-----------------+
+ \--------------+                    |
+                                     |
+ +--------------\                    |
+ | Sized        |<-------------------/
+ +--------------+
+ | __len__      |
+ \--------------+
+----
+
+.Частичная реализация протокола последовательности: метода `\\__getitem__` достаточно для доступа к элементам, итерирования и реализации оператора `in`
+[source, doctest]
+----
+>>> class Foo:
+...     def __getitem__(self, pos):
+...         return range(0, 30, 10)[pos]
+...
+>>> f = Foo()
+>>> f[1]
+10
+>>> for i in f: print(i)
+0
+10
+20
+>>> 20 in f
+True
+>>> 15 in f
+False
+----
+
+Метода `\\__iter__` в классе *Foo* нет, однако его экземпляры являются итерируемыми объектами, потому что даже в случае отсутствия `\\__iter__` Python, обнаружив метод `\\__getitem__`, пытается обойти объект, вызывая этот метод, с целочисленными индексами, начиная с 0. Поскольку Python достаточно умён, что бы обойти объект Foo, он может также реализовать оператор `in`, даже если в классе нет метода `\\__contains__`: для этого достаточно просто обойти объект в поисках элемента.
+
+=== Monkey patching или партизанское латание.
+
+[source, doctest]
+----
+>>> from deck import FrenchDeck         # Пример партизанского латания
+>>> def set_card(deck, position, card): # метод это всего лишь функция
+...     deck._cards[position] = card    # Данная функция знает об deck._cards
+...
+>>> FrenchDeck.__setitem__ = set_card   # Латаем функцию к специальному методу
+>>> deck = FrenchDeck()
+>>> from random import shuffle
+>>> shuffle(deck)                   # Теперь наша колода поддерживает перетасовку
+>>> deck[:5]
+[Card(rank='J', suit='крести'), Card(rank='6', suit='крести'), Card(rank='8', suit='черви'), Card(rank='2', suit='пики'), Card(rank='J', suit='буби')]
+----
+
+Как пример динамической типизации можно подчеркнуть протокол `random.shuffle`. Ему всё равно какой аргумент ему передан, лишь бы он мог реализовать метод изменения последовательности.
+
+NOTE: Вызов `isinstance(obj, cls)` приемлем, при условии, что `cls` -- абстрактный базовый класс, т.е. метаклассом `cls` является `abc.ABCMeta`
+
+=== Создание подкласса ABC
+
+Важно воспользоваться уже существующим абстрактным классом. Потому что всё уже написано до нас.
+
+Поэтому что бы реализовать колоду карт возьмём уже существующий `collections.MutableSequnce`
+
+[source, doctest]
+----
+Help on class MutableSequence in module collections.abc:
+class MutableSequence(Sequence)
+ |  All the operations on a read-write sequence.
+ |
+ |  Concrete subclasses must provide __new__ or __init__,
+ |  __getitem__, __setitem__, __delitem__, __len__, and insert().
+ |
+ |  Порядок разрешения метода:
+ |      MutableSequence
+ |      Sequence
+ |      Reversible
+ |      Collection
+ |      Sized
+ |      Iterable
+ |      Container
+ |      builtins.object
+ |
+ |  Определенные здесь методы:
+ |
+ |  __delitem__(self, index)
+ |
+ |  __iadd__(self, values)
+ |
+ |  __setitem__(self, index, value)
+ |
+ |  append(self, value)
+ |      S.append(value) -- append value to the end of the sequence
+ |
+ |  clear(self)
+ |      S.clear() -> None -- remove all items from S
+ |
+ |  extend(self, values)
+ |      S.extend(iterable) -- extend sequence by appending elements from the iterable
+ |
+ |  insert(self, index, value)
+ |      S.insert(index, value) -- insert value before index
+ |
+ |  pop(self, index=-1)
+ |      S.pop([index]) -> item -- remove and return item at index (default last).
+ |      Raise IndexError if list is empty or index is out of range.
+ |
+ |  remove(self, value)
+ |      S.remove(value) -- remove first occurrence of value.
+ |      Raise ValueError if the value is not present.
+ |
+ |  reverse(self)
+ |      S.reverse() -- reverse *IN PLACE*
+ |
+ |  ----------------------------------------------------------------------
+ |  Данные и другие атрибуты, определенные здесь:
+ |
+ |  __abstractmethods__ = frozenset({'__delitem__', '__getitem__', '__len_...
+ |
+ |  ----------------------------------------------------------------------
+ |  Методы, унаследованные от Sequence:
+ |
+ |  __contains__(self, value)
+ |
+ |  __getitem__(self, index)
+ |
+ |  __iter__(self)
+ |
+ |  __reversed__(self)
+ |
+ |  count(self, value)
+ |      S.count(value) -> integer -- return number of occurrences of value
+ |
+ |  index(self, value, start=0, stop=None)
+ |      S.index(value, [start, [stop]]) -> integer -- return first index of value.
+ |      Raises ValueError if the value is not present.
+ |
+ |      Supporting start and stop arguments is optional, but
+ |      recommended.
+ |
+ |  ----------------------------------------------------------------------
+ |  Методы класса, унаследованные от Reversible:
+ |
+ |  __subclasshook__(C) from abc.ABCMeta
+ |      Abstract classes can override this to customize issubclass().
+ |
+ |      This is invoked early on by abc.ABCMeta.__subclasscheck__().
+ |      It should return True, False or NotImplemented.  If it returns
+ |      NotImplemented, the normal algorithm is used.  Otherwise, it
+ |      overrides the normal algorithm (and the outcome is cached).
+ |
+ |  ----------------------------------------------------------------------
+ |  Методы, унаследованные от Sized:
+ |
+ |  __len__(self)
+ |
+ |  ----------------------------------------------------------------------
+ |  Методы класса, унаследованные от Iterable:
+ |
+ |  __class_getitem__ = GenericAlias(...) from abc.ABCMeta
+ |      Represent a PEP 585 generic type
+ |
+ |      E.g. for t = list[int], t.__origin__ is list and t.__args__ is (int,).
+----
+
+.*FrenchDeck2* подкласс `abc.MutableSequnce`
+[source, python]
+----
+include::{sourcedir}/frenchdeck2.py[]
+----
+
+
+TIP: На этапе импорта Python не проверяет, реализованы ли абстрактные методы. Это происходит только на этапе выполнения. И тогда если абстрактный метод не реализован, мы получим исключение `TypeError`. Поэтому мы обязаны реализовать `\\__delitem__` и `insert`, хотя они нам нафиг не нужны в примерах
+
+
