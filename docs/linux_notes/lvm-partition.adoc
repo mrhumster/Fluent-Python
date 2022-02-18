@@ -1,0 +1,197 @@
+include::../.asciidoctor/.asciidoctorconfig[]
+:toc:
+:toc-title: Список разделов
+= Создание LVM и установка его в каталог
+
+== Немного теории
+
+NOTE: LVM — это дополнительный слой абстракции от железа, позволяющий собрать кучи разнородных дисков в один, и затем снова разбить этот один именно так как нам хочется.
+
+.3 уровня абстракции:
+TIP: `PV (Physical Volume)` — физические тома (это могут быть разделы или целые «неразбитые» диски);
+`VG (Volume Group)` — группа томов (объединяем физические тома (PV) в группу, создаём единый диск, который будем дальше разбивать так, как нам хочется); `LV (Logical Volume)` — логические разделы, собственно раздел нашего нового «единого диска» ака Группы Томов, который мы потом форматируем и используем как обычный раздел, обычного жёсткого диска.
+
+== На практике
+
+=== Установка LVM
+
+Мы можем создать и смонтировать LVM-диск в каталоге в ubuntu 20.04, используя концепцию LVM. Вам нужно будет установить LVM на ubuntu 20.04.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo apt-get install lvm2
+
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+dmeventd libdevmapper-event1.02.1 liblvm2cmd2.03 libreadline5
+thin-provisioning-tools
+The following NEW packages will be installed:
+dmeventd libdevmapper-event1.02.1 liblvm2cmd2.03 libreadline5 lvm2
+thin-provisioning-tools
+0 upgraded, 6 newly installed, 0 to remove and 5 not upgraded.
+Need to get 2,247 kB of archives.
+After this operation, 8,883 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+
+----
+
+=== Найдем диск
+
+Для понимания нам нужно знать имя устройства диск в каталоге `/dev/`
+
+[source, bash]
+----
+ubuntu@user:~$ sudo lshw -C disk
+----
+
+=== Создание раздела
+
+[source, bash]
+----
+ubuntu@user:~$ sudo fdisk /dev/sdb
+
+Welcome to fdisk (util-linux 2.34).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+Device does not contain a recognized partition table.
+Created a new DOS disklabel with disk identifier 0x346be65d.
+
+Command (m for help):
+----
+
+NOTE: Нам нужно ввести `n`, чтобы создать новый диск. Я буду использовать все дисковое пространство, чтобы сделать его основным. Вы также можете выбрать любой размер по своему вкусу.
+
+[source, bash]
+----
+Command (m for help): n
+Partition type
+p primary (0 primary, 0 extended, 4 free)
+e extended (container for logical partitions)
+Select (default p):
+
+Using default response p.
+Partition number (1-4, default 1):
+First sector (2048-104857599, default 2048):
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-104857599, default 104857599):
+
+Created a new partition 1 of type 'Linux' and of size 50 GiB.
+----
+
+NOTE: С  помощью команды `p` проверьте вновь созданный раздел и нажмите `w`, чтобы сохранить его.
+
+[source, bash]
+----
+Device Boot    Start         End                     Sectors                       Size                Id            Type
+/dev/sdb1       2048        104857599         104855552                50G               83            Linux
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+----
+
+NOTE: Если вы хотите изменить тип с «Linux» на «Linux LVM», вы можете сделать это с помощью следующих команд `t`. «31» – это шестнадцатеричный код, используемый для Linux LVM.
+
+[source, bash]
+----
+Command (m for help): t
+Selected partition 1
+Hex code (type L to list all codes): 8e
+Changed type of partition 'Linux' to 'Linux LVM'.
+
+Command (m for help): p
+Disk /dev/sdb: 50 GiB, 53687091200 bytes, 104857600 sectors
+Disk model: VMware Virtual S
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x346be65d
+
+Device Boot Start End Sectors Size Id Type
+/dev/sdb1 2048 104857599 104855552 50G 8e Linux LVM
+----
+
+Теперь у нас есть диск, и нам нужно создать LVM. Вы должны использовать диск для создания тома Psychical, используя следующие команды.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo pvcreate /dev/sdb1
+Physical volume "/dev/sdb1" successfully created.
+----
+
+Нам нужно создать группу томов и логическую группу с помощью следующих команд.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo vgcreate vg /dev/sdb1 ## create volume group
+Volume group "vg" successfully created
+----
+[source, bash]
+----
+ubuntu@user:~$ sudo lvcreate -l 100%FREE -n lv_vg vg ## create logical volume
+Logical volume "lv_vg" created.
+----
+
+Мы успешно создали раздел LVM в ubuntu, используя приведенные выше команды. Вы также можете проверить оставшееся или выделенное пространство на всех томах с помощью команд pvs, vgs и lvs.
+
+=== Монтирование раздела LVM
+
+Вам нужно найти LVM-диск с помощью команды `fdisk -l` с разрешением sudo .
+
+[source, bash]
+----
+ubuntu@user:~$ sudo fdisk -l
+Disk /dev/mapper/vg-lv_vg: 49.102 GiB, 53682896896 bytes, 104849408 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+----
+
+Используйте команду ниже для форматирования диска с файловой системой xfs в ubuntu. Мы не можем использовать его без форматирования, потому что нам нужно создать блок в разделе LVM для хранения данных.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo mkfs.xfs /dev/mapper/vg-lv_vg
+mke2fs 1.45.5 (07-Jan-2020)
+Creating filesystem with 13106176 4k blocks and 3276800 inodes
+Filesystem UUID: b45239fc-c015-48d8-8cdc-33503698fd3e
+Superblock backups stored on blocks:
+32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+4096000, 7962624, 11239424
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (65536 blocks): done
+Writing superblocks and filesystem accounting information: done
+----
+
+
+Теперь блоки созданы, и нам нужно смонтировать их в каталоге.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo mkdir -p /opt/lvmfolder
+ubuntu@user:~$ sudo mount /dev/mapper/vg-lv_vg /opt/lvmfolder
+ubuntu@user:~$ sudo mount -a
+----
+
+Мы можем проверить точку монтирования с помощью команды `df -h`, а также сделать ее постоянной, потому что, когда вы перезагрузите систему, она исчезнет.
+
+[source, bash]
+----
+ubuntu@user:~$ sudo df -h | grep /dev/mapper/vg-lv_vg
+/dev/mapper/vg-lv_vg     49G     53M       47G          1%          /opt/lvmfolder
+----
+
+Сделайте запись в файле `/etc/fstab`, чтобы сделать его постоянной точкой монтирования.
+
+[source, bash]
+----
+/dev/mapper/vg-lv_vg      /opt/lvmfolder        ext4        defaults       0       0
+----
+
+Перезагрузите машину и проверьте, не пропала ли точка монтирования.

@@ -196,6 +196,12 @@ include::{sourcedir}/htmlize.py[]
 .Возможности этого декоратора шире, подробнее можно почитать тут:
 * https://www.python.org/dev/peps/pep-0443/[PEP-0443 Single-dispatch generic function]
 
+.Дополнительный пример диспетчеризации.
+[source,python]
+----
+include::{sourcedir}/test_dispatch.py[]
+----
+
 === Композиция декораторов
 
 Когда два декоратора `@d1` и `@d2` применяются к одной и той же функции `f` в указанном порядке, получается то же самое, что и в результате композиции `f=d1(d2(f))`
@@ -217,3 +223,4 @@ include::{sourcedir}/htmlize.py[]
 
 * https://www.python.org/dev/peps/pep-3104/[PEP 3104 -- Access to Names in Outer Scopes]
 
+* https://martinheinz.dev/blog/50[The Correct Way to Overload Functions in Python]
