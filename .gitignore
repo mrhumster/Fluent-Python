@@ -2,3 +2,5 @@
 /russian.dic
 /russian_1.dic
 /json.7z
+*.pyc
+/source/__pycache__/
