@@ -1,0 +1,60 @@
+include::./.asciidoctor/.asciidoctorconfig[]
+
+== Глава 15. Контекстные менеджеры и блоки `else`
+
+=== Блоки `else` вне `if`
+
+.for
+NOTE: Блок `else` выполняется, только если цикл `for` дошел до конца (т.е. не было преждевременного выхода с помощью `break`)
+
+.while
+NOTE: Блок `else` выполняется, только если цикл `while` завершился вследствие того, что условие приняло ложное условие(а не в результате преждевременного выхода с помощью `break`).
+
+.try
+NOTE: Блок `else` выполняется, только если в блоке `try` не возникало исключение.
+
+=== Контекстные менеджеры и блоки `with`
+
+Предложение `with` было задумано, для того что бы упростить конструкцию `try/finally`, гарантирующую, что некоторая операция будет выполнена после блока, даже если этот блок прерван в результате исключения, предложения `return` или вызова `sys.exit()`. Код внутри `finally` обычно освобождает критически важный ресурс или восстанавливает временно изменённое состояние.
+
+
+.Пример реализации контекстного менеджера
+[source, python]
+----
+include::{sourcedir}/mirror.py[]
+----
+
+NOTE: Реальные приложения, перехватывающие стандартный вывод, обычно хотят временно подменить `sys.stdout` похожим на файл объектом, а затем восстановить исходное состояние. Именно это и делает контекстный менеджер `contextlib.redirect_stdout` https://docs.python.org/3/library/contextlib.html#contextlib.redirect_stdout[link]: просто передайте ему похожий на файл объект.
+
+==== Примеры контекстных менеджеров из стандартной библиотеки
+
+* Управление транзакциями в модуле `sqlite3` https://docs.python.org/3/library/sqlite3.html#using-the-connection-as-a-context-manager[Using the connection as a context manager]
+
+* Хранение блокировок, условных переменных и семафоров в модуле `threading` https://docs.python.org/3/library/threading.html#using-locks-conditions-and-semaphores-in-the-with-statement[Using locks, conditions, and semaphores in the with statement]
+
+* Настройка среды для арифметических операций с объектами `Decimal` https://docs.python.org/3/library/decimal.html#decimal.localcontext[decimal.localcontext(ctx=None)]
+
+* Внесение временных изменений в объекты для тестирования https://docs.python.org/3/library/unittest.mock.html#patch[unittest.mock.patch(target, new=DEFAULT, spec=None, create=False, spec_set=None, autospec=None, new_callable=None, **kwargs)]
+
+=== Утилиты `contextlib`
+
+WARNING: Прежде чем писать свои собственные классы контекстных менеджеров, прочитайте https://docs.python.org/3/library/contextlib.html[contextlib — Utilities for with-statement contexts]
+
+`closing` -- функция для построения контекстных менеджеров из объектов, которые предоставляют метод `close()`, но не реализуют протокол `\\__enter__/\\__exit__`.
+
+`suppress` -- контекстный менеджер для временного игнорирования заданных исключений.
+
+`@contextmanager` -- декоратор, который позволяет построить контекстный менеджер из простой генераторной функции, вместо того, что бы создавать класс и реализовывать протокол
+
+`ContextDecorator` -- базовый класс для определения контекстных менеджеров на основе классов, которые можно использовать так же как и декоратор функции, так что вся функция будет работать внутри управляемого контекста.
+
+`ExitStack` -- контекстный менеджер, который позволяет составить композицию из переменного числа контекстных менеджеров
+
+=== Использование `@contextmanager`
+
+.`mirror_gen.py`: реализация контекстного менеджера с помощью генератора
+[source, python]
+----
+include::{sourcedir}/mirror_gen.py[]
+----
+
