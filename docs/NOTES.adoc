@@ -1,4 +1,4 @@
-= Конспект по книге _"Fluent Python"_
+= NOTEPAD 001: Конспект по книге _"Python. К вершинам мастерства."_
 Anton S Khomyakov <mr.humster@gmail.com>
 :url-repo: https://github.com/mrhumster/konspekt.git
 :experimental:
@@ -25,3 +25,6 @@ include::../docs/operator_reload.adoc[]
 include::../docs/iterators_and_generators.adoc[]
 include::../docs/context_manager.adoc[]
 include::../docs/coroutine.adoc[]
+include::../docs/concurrency_and_future_objects.adoc[]
+include::../docs/asyncio.adoc[]
+

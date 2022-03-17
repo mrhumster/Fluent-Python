@@ -1,0 +1,132 @@
+include::./.asciidoctor/.asciidoctorconfig[]
+
+== Глава 17. Параллелизм и будущие объекты
+
+"Потоки критикуют в основном системные программисты, имея в виду такие ситуации, с которыми типичный прикладной программист никогда не сталкивался. [...] В 99% случаев, с которыми имеет дело прикладной программист, достаточно знать, как запустить группу независимых потоки и собрать результаты."
+-- Мишель Семионато, вдумчивый пользователь Python.
+
+Эта глава посвящена библиотеке `concurrent.futures`, впервые реализованной в версии Python 3.2, но доступной так же в Python 2.5 и более поздних версиях в виде пакета `futures`.
+
+=== Пример: три способа загрузки из веба
+
+Рассмотрим реализации двух скриптов: `flags.py` и `flags_threadpool.py`. Скрипт `flags_asyncio.py` будет рассмотрен в главе 18.
+
+==== Скрипт последовательной загрузки
+
+.`flags.py`: последовательный скрипт загрузки
+[source, python]
+----
+include::{sourcedir}/flags.py[]
+----
+
+NOTE:  Библиотека `requests`, которую написал Кеннет Рейнц, доступна в PYPI (https://pypi.org/project/requests/). Функционально богаче и проще в использовании чем модуль `urllib.request` из стандартной библиотеки Python.
+
+.Пример вывода скрипта `flags.py`
+[source, doctest]
+----
+BD BR CD CN DE EG ET FR ID IN JP MX NG PH PK RU TR US VN
+19 flags downloaded in 19.98s
+----
+
+==== Загрузка с применением `concurrent.futures`
+
+.`flags_threadpool.py`: многопоточный скрипт загрузки с применением `concurrent.futures`
+[source, python]
+----
+include::{sourcedir}/flags_threadpool.py[]
+----
+
+.Пример вывода скрипта `flags_threadpool.py`
+[source, doctest]
+----
+ID BR FR CD RU US BD TR PK PH VN IN DE ET MX NG EG JP CN
+19 flags downloaded in 3.71s
+----
+
+TIP: Отметим, что функция `download_one` по сути дела является телом цикла `for` в функции `download_many`. Это типичный рефакторинг, встречающийся при написании параллельного кода: преобразовать тело последовательного цикла `for` в функцию, которая будет вызываться параллельно.
+
+=== Где находятся будущие объекты?
+
+В стандартной библиотеке Python 3.4 есть два класса с именем `Future`: `concurrent.futures.Future` и `asyncio.Future`. Они служат одной и той же цели: экземпляр класса `Future` представляет собой некое отложенное вычисление, завершившееся или нет.
+
+Будущие объекты инкапсулируют ожидание операции, так что их можно помещать в очереди, опрашивать состояние завершения и получать результаты (или исключения), когда они станут доступны.
+
+Экземпляры класса `concurrent.futures.Future` создаются только в результате планирования выполнения какой-то операции, с помощью одного из подклассов `concurent.futures.Executor`. Например, метод `Executor.submit()` принимает вызываемый объект, планирует его выполнение и возвращает будущий объект.
+
+Клиентский код не должен изменять состояние будущего объекта: его изменяет каркас распараллеливания, когда представляемое этим объектом вычисление завершится, а мы не можем управлять тем, когда это произойдёт.
+
+Оба класса `Future` имеют неблокирующий метод `.done()`, который возвращает boolean-значение, показывая завершился вызываемый объект или нет. Но вместо того что бы самому проверять состояние, просит что бы его уведомили. Поэтому в обоих классах `Future` есть метод `.add_done_callback()`: если передать ему вызываемый объект, то он будет вызван, когда будущий объект завершится, а в качестве аргумента будет передан сам этот будущий объект.
+
+.`flags_threadpool_ac.py`: замена `executor.map` на `executor.submit` и `futures.as_completed`
+[source, python]
+----
+include::{sourcedir}/flags_threadpool_ac.py[]
+----
+
+
+.Результат работы скрипта `flags_threadpool_ac.py`
+[source, doctest]
+----
+Scheduled for BR: <Future at 0x25b320e19c0 state=running>
+Scheduled for CN: <Future at 0x25b320e21a0 state=running>
+Scheduled for ID: <Future at 0x25b320e2a10 state=running>
+Scheduled for IN: <Future at 0x25b320e31f0 state=pending>
+Scheduled for US: <Future at 0x25b320e3220 state=pending>
+BR ID <Future at 0x25b320e19c0 state=finished returned str> result: 'BR'
+<Future at 0x25b320e2a10 state=finished returned str> result: 'ID'
+CN <Future at 0x25b320e21a0 state=finished returned str> result: 'CN'
+US IN <Future at 0x25b320e3220 state=finished returned str> result: 'US'
+<Future at 0x25b320e31f0 state=finished returned str> result: 'IN'
+
+5 flags downloaded in 2.11s
+----
+
+Примеры с использованием `concurrent.futures` ограничены _глобальной блокировкой интерпретатора_ *GIL*, а скрипт `flags_asyncio.py` вообще однопоточный.
+
+=== Блокирующий ввод-вывод и GIL
+
+Сам интерпретатор CPython не является потокобезопасным, поэтому в нём есть глобальная блокировка интерпретатора (Global Interpreter Lock -- GIL), которая разрешает в каждый момент времени выполняться только одному потоку. Именно поэтому один процесс Python обычно не может задействовать несколько процессорных ядер одновременноfootnote:[Это ограничение интерпретатора CPython, а не самого языка Python. У Jython и Iron Python такого ограничения нет. Однако у Pypy, самого быстрого из имеющихся интерпретаторов Python, GIL также имеется.]
+
+WARNING: Все блокирующие функции ввода-вывода в стандартной библиотеке освобождают GIL, уступая процессор другим потокам. Также освобождает GIL функция `time.sleep()`. Поэтому потоки Python можно без опаски использовать в приложениях с большим объемом ввода-вывода, несмотря на GIL.
+
+=== Запуск процессов с помощью `concurrent.futures`
+
+Страница документации по `concurrent.futures` (https://docs.python.org/3/library/concurrent.futures.html) имеет подзаголовок "Запуск параллельных задач". Этот пакет действительно поддерживает истинные параллельные вычисления, потому что умеет распределять работу между несколькими процессами Python благодаря классу `ProcessPoolExecutor` -- и тем самым обходить блокировка GIL и задействовать все имеющиеся процессорные ядра для счётных задач.
+
+И `ProcessPoolExecutor`, и `ThreadPoolExecutor` реализуют обобщённый интерфейс `Executor`, поэтому работая с `concurrent.futures` очень легко переходить от решения основанного на потоках к решению основанного на процессах.
+
+=== Эксперименты с `Executor.map`
+
+Запустить несколько вызываемых объектов параллельно проще всего с помощью функции `Executor.map`.
+
+.`demo_executor_map.py`: простая демонстрация метода `map` объекта `ThreadPoolExecutor`
+[source, python]
+----
+include::{sourcedir}/demo_executor_map.py[]
+----
+
+.пример выполнения скрипта `demo_executor_map.py`
+[source, shell script]
+----
+[22:18:03] Script starting
+[22:18:03] loiter(0): doing nothing for 0s...
+[22:18:03] loiter(0): done.
+[22:18:03]      loiter(1): doing nothing for 1s...
+[22:18:03]              loiter(2): doing nothing for 2s...
+[22:18:03]                      loiter(3): doing nothing for 3s...
+[22:18:03] results: <generator object Executor.map.<locals>.result_iterator at 0x000001099E3B2E30>
+[22:18:03] Waiting for individual results:
+[22:18:03] result 0: 0
+[22:18:04]      loiter(1): done.
+[22:18:04]                              loiter(4): doing nothing for 4s...
+[22:18:04] result 1: 10
+[22:18:05]              loiter(2): done.
+[22:18:05] result 2: 20
+[22:18:06]                      loiter(3): done.
+[22:18:06] result 3: 30
+[22:18:08]                              loiter(4): done.
+[22:18:08] result 4: 40
+----
+
+=== Загрузка с индикацией хода выполнения и обработки ошибок
+
