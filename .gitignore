@@ -4,3 +4,4 @@
 /json.7z
 *.pyc
 /source/__pycache__/
+/source/downloads/
