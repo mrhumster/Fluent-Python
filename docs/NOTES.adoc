@@ -26,5 +26,6 @@ include::../docs/iterators_and_generators.adoc[]
 include::../docs/context_manager.adoc[]
 include::../docs/coroutine.adoc[]
 include::../docs/concurrency_and_future_objects.adoc[]
+include::../docs/concurrency_and_futures_objects_isolate.adoc[]
 include::../docs/asyncio.adoc[]
 

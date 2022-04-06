@@ -6,7 +6,7 @@ import requests
 
 POP20_CC = ('CN IN US ID BR PK NG BD RU JP MX PH VN ET EG DE TR CD FR').split()
 
-BASE_URL = 'http://flupy.org/data/flags'
+BASE_URL = 'http://localhost:8000/static/flags'
 
 DEST_DIR = 'downloads/'
 
