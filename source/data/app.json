@@ -1,0 +1,133 @@
+{
+  "ConnectionStrings": {
+    "default": [
+      "Host=spb99-tsa-adb1; Database=tessa_arch; User ID=tessa_arch; Password=Master1234; Pooling=true; MaxPoolSize=100",
+      "Npgsql"
+    ],
+    "ext_log": [
+      "Host=spb99-tsa-adb1; Database=tessa_arch_sp_log; User ID=tessa_arch; Password=Master1234; Pooling=true; MaxPoolSize=100",
+      "Npgsql"
+    ]
+  },
+  "DataProviders": {
+    "Npgsql": "Npgsql.NpgsqlFactory, Npgsql"
+  },
+  ".if": [
+    "linux",
+    {
+      "Settings": {
+        "ChronosDependencies": "Chronos.Platform.LinuxChronosPlatformDependencies, Chronos.Platform.Linux"
+      }
+    }
+  ],
+  ".include": [
+    "app-*.json"
+  ],
+  "Settings": {
+    "ServerCode": "ARCH",
+    "LicenseFile": "@*.tlic",
+    "SignatureKey": "VHFn+zCnvIXVMxyNjEy1pP86GryXw+V/T4eO0nx/TBzxKOJVfaVZAysVIeqEbOs/tf9hAECv9deWw9V8Rcg8UQ==",
+    "CipherKey": "b8L8BaTX2HHhofUBT9QxbJM/cYQh+mEoqooKwavyfQA=",
+    "LimitMaxThreads": true,
+    "ViewAccessCacheTimeSpan": "0.01:00:00",
+    "RoleTimeoutTimeSpan": "0.00:30:00",
+    "Redis": "",
+    "ProbingPath": "extensions",
+    "PluginFolderName": "Plugins",
+    "AwaitGracefulStopSeconds": 30,
+    "AwaitCancellationDeltaSeconds": 2,
+    "ServerDependencies": "Tessa.Server.TessaServerDependencies, Tessa.Server",
+    "RolesLockTimeoutSeconds": 300,
+    "ExtensionTracingMode": "Off",
+    "RoleScheduler.RescheduleSeconds": 300,
+    "DeputiesRecalc.BulkSize": 500000,
+    "Maintenance.RemoveActionHistoryOlderThanDays": 180,
+    "Maintenance.RemoveClosedSessionsOlderThanDays": 8,
+    "Maintenance.RemoveDeletedCardsOlderThanDays": 30,
+    "Maintenance.RemoveErrorCardsOlderThanDays": 180,
+    "Maintenance.RemoveOperationsOlderThanDays": 7,
+    "Maintenance.RemoveCompiledViewsOlderThanDays": 1,
+    "AdSync.Server": "10.50.24.75",
+    "AdSync.User": "GAZPROM-NEFT\\TessaSync",
+    "AdSync.Password": "J|VO%n|fDoN|Ky8v$~dlJO}D",
+    "AdSync.UserDomain": "",
+    "AdSync.UseSSL": false,
+    "AdSync.SkipSystemPartitions": true,
+    "AdSync.SkipReferralList": [
+      "DC=ForestDnsZones,DC=domain,DC=name,DC=com",
+      "DC=DomainDnsZones,DC=domain,DC=name,DC=com"
+    ],
+    "DocLoad.OutputFolderFormat": "yyyy-MM-dd_HH-mm-ss",
+    "DocLoad.IncludeSubFolders": false,
+    "NoticeMailer.Mode": "SMTP",
+    "NoticeMailer.ExchangeOAuthToken": "",
+    "NoticeMailer.ExchangeUser": "TessaNotice",
+    "NoticeMailer.ExchangePassword": "6s&v8zg37B",
+    "NoticeMailer.ExchangeServer": "https://outlook.office365.com/ews/exchange.asmx",
+    "NoticeMailer.ExchangeProxyAddress": null,
+    "NoticeMailer.ExchangeProxyUser": null,
+    "NoticeMailer.ExchangeProxyPassword": null,
+    "NoticeMailer.ExchangeVersion": "Exchange2010",
+    "NoticeMailer.ExchangeFrom": "",
+    "NoticeMailer.ExchangeFromDisplayName": "TESSA",
+    "NoticeMailer.SmtpPickupDirectoryLocation": null,
+    "NoticeMailer.SmtpHost": "asmtp.gazprom-neft.local",
+    "NoticeMailer.SmtpPort": 587,
+    "NoticeMailer.SmtpEnableSsl": false,
+    "NoticeMailer.SmtpDefaultCredentials": false,
+    "NoticeMailer.SmtpUserName": "TessaNotice",
+    "NoticeMailer.SmtpPassword": "6s&v8zg37B",
+    "NoticeMailer.SmtpClientDomain": "",
+    "NoticeMailer.SmtpFrom": "TessaNotice@gazprom-neft.ru",
+    "NoticeMailer.SmtpFromDisplayName": "TESSA",
+    "NoticeMailer.SmtpTimeout": 0,
+    "NoticeMailer.NumberOfMessagesToProcessAtOnce": 1000,
+    "NoticeMailer.MaxAttemptsBeforeDelete": 5,
+    "NoticeMailer.RetryIntervalMinutes": 60,
+    "NoticeMailer.MaxFilesSizeEmail": 20000,
+    "NoticeMailer.MaxNumberWorkingProcesses": 1,
+    "MobileApproval.Mode": "Disabled",
+    "MobileApproval.ExchangeOAuthToken": "",
+    "MobileApproval.ExchangeUser": "user@outlook.com",
+    "MobileApproval.ExchangePassword": "",
+    "MobileApproval.ExchangeServer": "https://outlook.office365.com/ews/exchange.asmx",
+    "MobileApproval.ExchangeProxyAddress": null,
+    "MobileApproval.ExchangeProxyUser": null,
+    "MobileApproval.ExchangeProxyPassword": null,
+    "MobileApproval.ExchangeVersion": "Exchange2010",
+    "MobileApproval.Pop3ImapHost": "user@domain.name.com",
+    "MobileApproval.Pop3ImapPort": 587,
+    "MobileApproval.Pop3ImapUser": "user@outlook.com",
+    "MobileApproval.Pop3ImapPassword": "",
+    "MobileApproval.Pop3ImapUseSsl": true,
+    "OpenOfficePython": "python3",
+    "UnoconvExternalCommand": null,
+    "FileConverter.CacheCleanPeriod": "0.12:00:00",
+    "FileConverter.OldestPreviewFilePeriod": "10.00:00:00",
+    "FileConverter.MaintenancePeriod": "0.01:00:00",
+    "WorkflowAsync.PollingPeriod": "0.00:00:05",
+    "WorkflowAsync.RecyclePeriod": "0.00:30:00",
+    "WorkflowScheduler.RescheduleSeconds": 5,
+    "WorkflowScheduler.RescheduleTimesForReset": 120,
+    "MailProcessing.Mode": "Exchange",
+    "MailProcessing.ImapHostname": "mail.gazprom-neft.local",
+    "MailProcessing.ImapPort": 25,
+    "MailProcessing.ImapUseSSL": false,
+    "MailProcessing.ExchangeServer": "https://mail.gazprom-neft.local/ews/exchange.asmx",
+    "MailProcessing.ExchangeVersion": "Exchange2013",
+    "ExtensionLogSettings": {
+      "Clear": [
+        {
+          "ConnectionAlias": "ext_log",
+          "Module": "CSP_RECEIVING",
+          "Period": "150days"
+        },
+        {
+          "ConnectionAlias": "ext_log",
+          "Module": "CSP_PROXY",
+          "Period": "150days"
+        }
+      ]
+    }
+  }
+}

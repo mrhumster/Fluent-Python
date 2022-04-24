@@ -1,0 +1,20 @@
+@startuml
+class Quantity <<description>> {
+    {field} storage_name:
+    {method} __init__
+    {method} __get__
+    {method} __set__
+}
+
+class LineItem {
+    {field} description
+    {field} _Quantity#0 {storage}
+    {field} _Quantity#1 {storage}
+    {method} __init__
+    {method} subtotal
+}
+
+Quantity <-* LineItem: weight
+Quantity <-* LineItem: price
+Quantity -[dotted]-> LineItem: get and set managed attribute
+@enduml

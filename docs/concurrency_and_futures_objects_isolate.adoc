@@ -1,0 +1,40 @@
+=== Загрузка с индикацией хода выполнения и обработкой ошибок
+
+
+.`flags2_common.py`
+[source, python]
+----
+include::../source/flags2_common.py[]
+----
+
+.`flags2_sequential.py`
+[source, python]
+----
+include::../source/flags2_sequential.py[]
+----
+
+.`flags2_threadpool.py`
+[source, python]
+----
+include::../source/flags2_threadpool.py[]
+----
+
+NOTE: В примере используется идиома, очень полезная при работе с функцией `futures.as_completed`: построить словарь, ставящий в соответствие каждому будущему объекту данные, которые можно будет использовать по завершении этого объекта. В данном случае словарь `to_do_map` сопоставляет с будущим объектом соответствующий ему код страны. Это упрощает последующую обработку будущих объектов, несмотря на то, что завершаться они могут не по порядку.`
+
+
+=== Альтернативы: многопоточная и многопроцессорная обработка
+
+Потоки поддерживались в Python с самой первой публичной версии 0.9.8 (1993); пакет `concurrent.futures` - всего лишь самый последний спосов их использования. В Python3 первоначальный модель `thread` объявлен неркомендуемым, предпочтение отдается модулю `threading` более высокого уровня(https://docs.python.org/3/library/threading.html[threading — Thread-based parallelism]footnote:[Модуль `threading` включён в Python, начиная с версии 1.5.1(1998), и всё же некоторые продолжают настаивать на использовании старого модуля. В Python 3 он был переименован в `_thread`, что бы подчеркнуть, что это всего лишь низкоуровневая деталь реализации, и использовать его в прикладном коде не стоит.]). Если класс `futures.ThreadPoolExecutor` не обладает достаточной гибкостью для некоторых задач, то можно реализовать собственное решение на основе таких примитивных компонентов из модуля `threading`, как `Thread`, `Lock`, `Semaphore` и т.д. - быть может, воспользовавшись также потокобезопасными очередями из модуля `queue` (https://docs.python.org/3/library/queue.html[queue — A synchronized queue class]) для передачи данных между потоками. В классе `futures.ThreadPoolExecutor` все эти детали инкапсулированы.
+
+Для счётных задач приходится обходить GIL посредством запуска нескольких процессов. Класс `futures.ProcessPoolExecutor` -- простейший способ это сделать. Но если перед вами стоит особо сложная задача, то можно воспользоваться и более тонкими инструментами. Пакет `multiprocessing` (https://docs.python.org/3/library/multiprocessing.html) имитирует API модуля `threading`, но делегирует работу не потокам, а процессам. В простых програмах для замены `threading` на `multiprocessing` достаточно нескольких изменений. Но `multiprocessing` предлагает также средства для решения самой серьезной проблемы, возникающей при организации взаимодействующих процессов: как передавать данные между ними.
+
+=== Дополнительная литература
+
+* https://peps.python.org/pep-3148/[PEP 3148 – futures - execute computations]
+
+* https://www.artima.com/weblogs/viewpost.jsp?thread=214235[It isn't Easy to Remove the GIL
+by Guido van Rossum]
+
+* http://www.dabeaz.com/GIL/[Understanding the Python GIL]
+
+* https://peps.python.org/pep-0371/[PEP 371 – Addition of the multiprocessing package to the standard library]

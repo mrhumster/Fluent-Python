@@ -28,4 +28,5 @@ include::../docs/coroutine.adoc[]
 include::../docs/concurrency_and_future_objects.adoc[]
 include::../docs/concurrency_and_futures_objects_isolate.adoc[]
 include::../docs/asyncio.adoc[]
-
+include::../docs/dynamic_attr_and_settings.adoc[]
+include::../docs/attribute_descriptors.adoc[]
