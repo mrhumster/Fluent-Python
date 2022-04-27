@@ -1,0 +1,25 @@
+@startuml
+together {
+
+    class Quantity <<description>> extends Validated{
+        {method} validate
+    }
+
+    class NonBlank <<description>> extends Validated{
+        {method} validate
+    }
+
+}
+class Validated <<description>> extends AutoStorage {
+    {method} __set__
+    {method} validate
+}
+
+class AutoStorage <<description>> {
+    {field} __counter
+    {field} storage_name
+    {method} __init__
+    {method} __get__
+    {method} __set__
+}
+@enduml

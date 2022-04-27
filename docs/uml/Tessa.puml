@@ -1,0 +1,27 @@
+@startuml
+component "Aquarius T55 D35" <<Server RX>> {
+    card Virtual_Hypervisor {
+        node Host_1 {
+            component "Tessa WEB" {
+            }
+            component "Chronos" {
+
+            }
+            component "Redis" {
+            }
+
+        }
+        node Host_2 {
+            database DB <<Postgres>> {
+
+            }
+            storage FileStorage {
+
+            }
+        }
+    }
+}
+
+Host_1 ---> Host_2: Postgres (5432)
+Host_1 --> Host_2: NFS (445)
+@enduml
