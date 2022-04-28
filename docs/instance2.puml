@@ -1,0 +1,9 @@
+@startuml
+abstract class object
+class str extends object
+abstract class type <<metaclass>>
+class LineItem extends object
+str -[dotted]-> type
+LineItem -[dotted]-> type: "instance of"
+object -[dotted]-> type: "instance of"
+@enduml
